@@ -56,3 +56,28 @@ pub async fn create_entity(
 
     Ok(Json(record.ok_or(StatusCode::INTERNAL_SERVER_ERROR)?))
 }
+
+pub async fn delete_entity(id: Path<String>) -> Result<StatusCode, StatusCode> {
+    let _deleted: Option<Entity> = DB
+        .delete(("entity", id.0))
+        .await
+        .map_err(|_| StatusCode::INTERNAL_SERVER_ERROR)?;
+
+    Ok(StatusCode::NO_CONTENT)
+}
+
+pub async fn update_entity(
+    id: Path<String>,
+    Json(req): Json<Entity>,
+) -> Result<Json<Entity>, StatusCode> {
+    let record: Option<Entity> = DB
+        .update(("entity", id.0))
+        .content(Entity {
+            id: None,
+            name: req.name,
+        })
+        .await
+        .map_err(|_| StatusCode::INTERNAL_SERVER_ERROR)?;
+
+    Ok(Json(record.ok_or(StatusCode::NOT_FOUND)?))
+}

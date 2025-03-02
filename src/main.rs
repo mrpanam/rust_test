@@ -24,7 +24,9 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         .route("/books", get(handlers::list_book))
         .route("/entities", get(handlers::list_entities))
         .route("/entity/{id}", get(handlers::get_entity))
-        .route("/entity", post(handlers::create_entity));
+        .route("/entity", post(handlers::create_entity))
+        .route("/entity/{id}", delete(handlers::delete_entity))
+        .route("/entity/{id}", put(handlers::update_entity));
 
     axum::serve(listener, app).await?;
     println!("Server running");
